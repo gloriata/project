@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data Translation Challenge</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Final Data Translation_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Final Data Translation_files/libs/quarto-html/quarto.js"></script>
+<script src="Final Data Translation_files/libs/quarto-html/popper.min.js"></script>
+<script src="Final Data Translation_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Final Data Translation_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Final Data Translation_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Final Data Translation_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Final Data Translation_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Final Data Translation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Final Data Translation_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Translation Challenge</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The COVID-19 pandemic has had widespread and far-reaching effects on the global economy, with the retail sector experiencing particularly significant disruptions. While our company has been able to monitor its own performance during this period, we wish to understand the broader economic impacts, both within retail and across other industries.</p>
+<p>To support our investigation into the economic effects of the COVID-19 pandemic, our team analyzed data from the <strong>Current Population Survey (CPS)</strong> provided by <strong>IPUMS</strong>, with a focus on employment trends from the pre-pandemic period through April 2022. By examining shifts in employment at both the individual and industry levels, our goal is to generate meaningful insights into the evolving labor market landscape and assess the performance of the retail sector in comparison to other segments of the economy.</p>
+<p>Our analysis is structured around three central research questions:</p>
+<ol type="1">
+<li><em>How has COVID-19 affected the health of the retail industry, as measured by employment?</em></li>
+<li><em>How has retail fared relative to other industries?</em></li>
+<li><em>What has changed about who is working and earning income during the pandemic?</em></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Working Data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"Q1-3 Data Translation Environment.RData"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Libraries</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipumsr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.0.4     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'janitor'
+
+The following objects are masked from 'package:stats':
+
+    chisq.test, fisher.test</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'zoo'
+
+The following objects are masked from 'package:base':
+
+    as.Date, as.Date.numeric</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vtable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: kableExtra
+
+Attaching package: 'kableExtra'
+
+The following object is masked from 'package:dplyr':
+
+    group_rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="effect-of-covid-19-on-retail-employment" class="level3">
+<h3 class="anchored" data-anchor-id="effect-of-covid-19-on-retail-employment">1. Effect of COVID-19 on Retail Employment</h3>
+<p>To assess the impact of the COVID-19 pandemic on the retail sector’s employment, we analyzed microdata from the Current Population Survey (CPS), focusing on monthly employment and unemployment figures within retail from January 2019 through April 2022.</p>
+</section>
+<section id="why-we-run-these-analyses" class="level3">
+<h3 class="anchored" data-anchor-id="why-we-run-these-analyses">Why We Run These Analyses?</h3>
+<p>Our primary goal is to measure how employment and unemployment in the retail sector changed due to COVID-19. To do this, we need to:</p>
+<ol type="1">
+<li>Track employment and unemployment counts over time within the retail industry.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot: Retail Employment Over Time</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(retail_employment, <span class="fu">aes</span>(<span class="at">x =</span> year_month, <span class="at">y =</span> total_employed_mil)) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">as.yearmon</span>(<span class="st">"2020-04"</span>, <span class="st">"%Y-%m"</span>), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Retail Employment Over Time"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Dashed line = start of COVID-19 (Apr 2020)"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Time (Year-Month)"</span>, <span class="at">y =</span> <span class="st">"Total Employed (Millions)"</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-Data-Translation_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The above graph depicts the monthly total employment count in retail sector from the pre-pandemic period through April 2022. The dashed vertical line marks April 2020, the approximate onset of widespread COVID-19 disruptions in the U.S. economy. The <strong>retail employment plot</strong> illustrates a decline in the number of employed retail workers beginning in April 2020, which could be a reflection of job losses due to business closures and reduced consumer demand. After this steep drop, the employment level shows signs of gradual recovery but remains below pre-pandemic levels as of April 2022.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot: Retail Unemployment Over Time</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(retail_unemployment, <span class="fu">aes</span>(<span class="at">x =</span> year_month, <span class="at">y =</span> total_unemployed_mil)) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"darkred"</span>) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">as.yearmon</span>(<span class="st">"2020-04"</span>, <span class="st">"%Y-%m"</span>), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Retail Unemployment Over Time"</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Dashed line = start of COVID-19 (Apr 2020)"</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Time (Year-Month)"</span>, <span class="at">y =</span> <span class="st">"Total Unemployed (Millions)"</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-Data-Translation_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <strong>retail unemployment plot</strong> above complements the employment plot by showing a corresponding surge in unemployment among retail workers starting in April 2020. This increase highlights the significant rise in joblessness within retail during the pandemic’s early months, before unemployment begins to gradually trend downward again.</p>
+<p>Immediately following the onset of the COVID-19 pandemic in April 2020, there is a sharp and drastic spike in total unemployment within the retail sector, reaching an approximate unemployment of 3 million. This sudden surge is clearly visible as a steep upward jump in the unemployment plot just after the dashed cutoff line. It reflects widespread job losses as retail businesses faced mandatory closures, reduced foot traffic, and supply chain disruptions. The unprecedented rise in unemployment underscores the severe and immediate economic shock experienced by retail workers, many of whom faced layoffs or furloughs. This spike is followed by a gradual decline, indicating some recovery as restrictions eased and economic activity resumed, but unemployment levels remain elevated compared to the pre-pandemic period.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retail Employment Pre vs. Post-COVID Plot ---</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(retail_employment, <span class="fu">aes</span>(<span class="at">x =</span> year_month, <span class="at">y =</span> total_employed_mil, <span class="at">color =</span> <span class="fu">factor</span>(post_covid))) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"darkgreen"</span>, <span class="st">"orange"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre-COVID"</span>, <span class="st">"Post-COVID"</span>)) <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Retail Employment Trends Pre vs Post-COVID"</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> <span class="st">"Total Employed (Millions)"</span>, <span class="at">color =</span> <span class="st">"Period"</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-Data-Translation_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot compares retail employment levels before and after the onset of the COVID-19 pandemic. The data points are color-coded to distinguish the two periods, with green representing pre-COVID months and orange representing post-COVID months starting from April 2020.</p>
+<p>The trend lines reveal a clear shift: prior to the pandemic, retail employment showed a relatively stable pattern, with seasonal drops and increases in retail employment. However, following April 2020, there is a noticeable and sustained decline in total employment within the sector. This decline highlights the lasting negative impact COVID-19 has had on retail jobs, likely driven by reduced consumer demand, temporary store closures, and shifts toward online shopping.</p>
+<p>The distinct change in slope between the pre- and post-pandemic periods quantifies how the crisis altered the trajectory of retail employment, reinforcing the magnitude of disruption experienced by the industry. However, it is also notable that the post-COVID trend line slopes upward, indicating a gradual recovery in retail employment following the initial shock. This suggests that while the sector was severely impacted at the start of the pandemic, there have been positive signs of labor market rebound in retail over time.</p>
+<ol start="2" type="1">
+<li>Statistically test whether there is a significant difference in employment before and after the pandemic onset.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retail Employment Regression (Aggregate) ---</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>model_emp <span class="ot">&lt;-</span> <span class="fu">feols</span>(total_employed_mil <span class="sc">~</span> post_covid <span class="sc">+</span> month_index, <span class="at">data =</span> retail_employment)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>model_unemp <span class="ot">&lt;-</span> <span class="fu">feols</span>(total_unemployed_mil <span class="sc">~</span> post_covid <span class="sc">+</span> month_index, <span class="at">data =</span> retail_unemployment)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">etable</span>(model_emp, model_unemp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         model_emp          model_unemp
+Dependent Var.: total_employed_mil total_unemployed_mil
+                                                       
+Constant         16.19*** (0.2048)    1.196*** (0.1039)
+post_covid       -1.027** (0.3524)    1.270*** (0.1788)
+month_index       0.0214. (0.0117)  -0.0296*** (0.0060)
+_______________ __________________ ____________________
+S.E. type                      IID                  IID
+Observations                    52                   52
+R2                         0.17554              0.53311
+Adj. R2                    0.14189              0.51406
+---
+Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>To assess the impact of COVID-19 on retail employment, we estimated linear regression models with employment and unemployment levels (in millions) as dependent variables. The key explanatory variable, <strong>post_covid</strong>, is a binary indicator equal to 1 for periods from April 2020 onward, capturing the pandemic’s onset. We also included a linear time trend (<strong>month_index</strong>) to control for underlying trends over the study period.</p>
+<p>Results from the employment model show a statistically significant negative coefficient on <strong>post_covid</strong> (-1.027, p &lt; 0.01), indicating that retail employment decreased by approximately 1.03 million jobs immediately after the pandemic began, holding the time trend constant. The positive but marginally significant coefficient on <strong>month_index</strong> (0.0214, p ≈ 0.07) suggests a slight upward trend in employment over time, consistent with a gradual recovery.</p>
+<p>In contrast, the unemployment model reveals a significant positive coefficient on <strong>post_covid</strong> (1.270, p &lt; 0.001), indicating an increase of roughly 1.27 million unemployed retail workers immediately following the pandemic’s onset. The negative and highly significant time trend coefficient (-0.0296, p &lt; 0.001) reflects a steady decrease in unemployment over time after the initial spike.</p>
+<p>The models explain a moderate portion of the variation in employment (Adjusted R² ≈ 0.14) and a more substantial proportion in unemployment (Adjusted R² ≈ 0.51).</p>
+<p>These findings confirm that COVID-19 caused a sharp and immediate drop in retail employment alongside a sharp increase in unemployment, followed by signs of gradual recovery over the subsequent months.</p>
+<ol start="3" type="1">
+<li>Control for confounding factors such as seasonality, time trends, and demographic characteristics that might also affect employment independently of COVID-19.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>retail_employment_individual <span class="ot">&lt;-</span> retail_data <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">employed =</span> <span class="fu">if_else</span>(empstat <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"At work"</span>, <span class="st">"Has job, not at work last week"</span>), <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">post_covid =</span> <span class="fu">if_else</span>(year_month <span class="sc">&gt;=</span> <span class="fu">as.yearmon</span>(<span class="st">"2020-04"</span>, <span class="st">"%Y-%m"</span>), <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year_month, month, statefip, age, race, citizen, wtfinl, employed, post_covid)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>model_emp_controls <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  employed <span class="sc">~</span> post_covid <span class="sc">+</span> <span class="fu">factor</span>(month) <span class="sc">+</span> <span class="fu">factor</span>(statefip) <span class="sc">+</span> age <span class="sc">+</span> <span class="fu">factor</span>(race) <span class="sc">+</span> <span class="fu">factor</span>(citizen),</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="sc">~</span>wtfinl,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> retail_employment_individual</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The variables 'age1', 'age2', 'age3', 'age4', 'age5', 'age6' and 11 others have been removed because of collinearity (see $collin.var).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">etable</span>(model_emp_controls, <span class="at">keep =</span> <span class="st">"post_covid"</span>, <span class="at">tex =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 model_emp_controls
+Dependent Var.:            employed
+                                   
+post_covid      -0.0286*** (0.0009)
+_______________ ___________________
+S.E. type                       IID
+Observations                309,470
+R2                          0.01792
+Adj. R2                     0.01742
+---
+Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>After controlling for month, state, age, race, and citizenship status, the probability that a retail worker is employed <strong>decreased by about 2.9 percentage points</strong> following the onset of COVID-19 (April 2020 and onward). This decline is statistically significant at the 0.1% level, indicating a robust effect of the pandemic on retail employment at the individual level.</p>
+<p><strong>What this means:</strong> Even after accounting for seasonal effects (month), geographic variation (state), and demographic factors (age, race, citizenship), retail employees faced a statistically significant reduction in employment probability after the pandemic started. This reinforces the conclusion that COVID-19 had a widespread negative impact on retail employment beyond simple aggregate trends.</p>
+<p><strong>Assumptions and Their Plausibility:</strong></p>
+<ol type="1">
+<li><strong>Parallel trends:</strong> We assume that absent COVID-19, retail employment would have continued its prior trend. The month index in our regressions helps control for time trends, but structural breaks unrelated to COVID-19 could bias estimates. The smooth pre-pandemic trends in the plots support this assumption.</li>
+<li><strong>Exogeneity of post-COVID indicator:</strong> While government stimulus or policy changes may also impact employment, we assume no other major confounding event starting precisely April 2020 influences retail employment.</li>
+<li><strong>Accurate classification:</strong> The use of industry codes and employment status from CPS is assumed accurate and consistent over time. Some misclassification or reporting errors could exist but are unlikely to systematically bias the results.</li>
+</ol>
+<p><strong>Summary:</strong> Our analyses show that the COVID-19 pandemic caused a sharp and statistically significant decline in retail employment and a simultaneous spike in unemployment starting April 2020. While retail employment shows signs of recovery, it remains below pre-pandemic levels as of April 2022. Controlling for demographics and seasonality confirms the robustness of these findings.</p>
+</section>
+<section id="how-has-retail-fared-relative-to-other-industries" class="level3">
+<h3 class="anchored" data-anchor-id="how-has-retail-fared-relative-to-other-industries">2. How Has Retail Fared Relative to Other Industries?</h3>
+<p>We want to investigate how retail employment changed relative to other sectors before and after the pandemic’s onset (April 2020). Retail is a key sector heavily affected by lockdowns and consumer behavior changes, so comparing retail to non-retail industries, and further exploring heterogeneity among major industry groups, can provide insights into the differential economic impacts of COVID-19 on employment.</p>
+<ol type="1">
+<li>Retail vs Non-Retail Employment Trends</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(combined_emp_ts, <span class="fu">aes</span>(<span class="at">x =</span> year_month, <span class="at">y =</span> total_employed_mil, <span class="at">color =</span> industry_group)) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">as.yearmon</span>(<span class="st">"2020-04"</span>), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Employment Trends: Retail vs. Non-Retail"</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Dashed line = start of COVID-19 (April 2020)"</span>,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Time (Year-Month)"</span>, <span class="at">y =</span> <span class="st">"Total Employed (Millions)"</span>, <span class="at">color =</span> <span class="st">"Industry Group"</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-Data-Translation_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>At the onset of the pandemic in April 2020, both retail and non-retail sectors experienced employment declines. This visual and statistical comparison aims to capture the differential impact of COVID-19 on employment across these groups. While retail is known to be particularly vulnerable to lockdowns and social distancing measures, interestingly, non-retail employment showed a larger immediate drop than retail employment. This may reflect the broad and heterogeneous nature of the non-retail category, which includes a wide range of services, some of which were severely disrupted during the early stages of the pandemic.</p>
+<ol start="2" type="1">
+<li>Retail vs Non-Retail Diff-in-Diff Regression</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>model_diff <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  total_employed_mil <span class="sc">~</span> post_covid <span class="sc">+</span> retail <span class="sc">+</span> interaction <span class="sc">+</span> month_index,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> combined_emp_ts</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">etable</span>(model_diff, <span class="at">tex =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                        model_diff
+Dependent Var.: total_employed_mil
+                                  
+Constant         138.3*** (0.6195)
+post_covid       -11.07*** (1.023)
+retail          -124.4*** (0.6357)
+interaction      5.446*** (0.9165)
+month_index     0.0990*** (0.0152)
+_______________ __________________
+S.E. type                      IID
+Observations                   104
+R2                         0.99861
+Adj. R2                    0.99855
+---
+Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>In this difference-in-differences (DiD) mode, the dependent variable is total employment in millions (<code>total_employed_mil</code>), modeled as a function of:</p>
+<ul>
+<li><p><code>post_covid</code>: an indicator for the period after April 2020 (pandemic onset),</p></li>
+<li><p><code>retail</code>: an indicator for the retail industry group,</p></li>
+<li><p><code>interaction</code>: the interaction between <code>post_covid</code> and <code>retail</code> capturing the differential effect of COVID-19 on retail employment relative to non-retail,</p></li>
+<li><p><code>month_index</code>: a linear time trend to control for underlying temporal trends in employment.</p></li>
+</ul>
+<p><strong>Results</strong>:</p>
+<ul>
+<li><p>Non-retail employment dropped significantly by about <strong>11.07 million</strong> (<code>post_covid</code> coefficient), holding other factors constant.</p></li>
+<li><p>The positive and statistically significant interaction term (<code>5.446 million</code>) indicates that retail employment experienced a smaller employment decline relative to non-retail industries during the pandemic period.</p></li>
+</ul>
+<ol start="3" type="1">
+<li>However, the baseline employment level for non-retail industries before COVID-19 is approximately <strong>138.3 million,</strong> while retail industries had a much lower baseline employment level, approximately <strong>124.4 million fewer</strong> than non-retail sectors before COVID-19. This means that all though retail employment did not drop as much as non-retail, it does not mean retail was more resilient to COVID-19, as there was simply more non-retail data.</li>
+</ol>
+<!-- -->
+<ol start="3" type="1">
+<li>Average Employment Rate Analysis</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot: Average Employment Rate: Retail vs Other Industries</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(avg_by_retail, <span class="fu">aes</span>(<span class="at">x =</span> year_month, <span class="at">y =</span> mean_employed, <span class="at">color =</span> retail_label)) <span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">as.yearmon</span>(<span class="st">"2020-04"</span>), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Average Employment Rate: Retail vs Other Industries"</span>,</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Weighted average employment among labor force participants"</span>,</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> <span class="st">"Average Employment Rate"</span>, <span class="at">color =</span> <span class="st">"Industry Group"</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"darkgreen"</span>, <span class="st">"steelblue"</span>)) <span class="sc">+</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-Data-Translation_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot visualizes the weighted average employment rates for retail and non-retail industries over time, focusing on labor force participants. The vertical dashed line marks April 2020, signaling the start of the COVID-19 pandemic. By using the average employment rate, we can now fairly analyze the effect of COVID-19 on retail and non-retail employment, without worrying about sample sizes.</p>
+<p>Both retail and non-retail sectors exhibit stable employment rates prior to the pandemic. Following April 2020, a clear drop in employment rates is observed across both groups, consistent with widespread economic disruptions.</p>
+<p>Notably, the retail sector (blue line) shows a steeper decline in average employment rate compared to non-retail industries (green line). This suggests that it was actually retail workers that faced relatively greater employment challenges during the pandemic, potentially due to lockdown measures and reduced consumer foot traffic.</p>
+<p>Over time, both sectors exhibit signs of recovery, with employment rates trending upward post-pandemic onset. This plot complements earlier findings on total employment, adding nuance by illustrating changes in employment rates rather than absolute employment counts.</p>
+<ol start="4" type="1">
+<li>Industry Group Heterogeneity</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(industry_group_ts, <span class="fu">aes</span>(<span class="at">x =</span> year_month, <span class="at">y =</span> total_employed_mil, <span class="at">color =</span> industry_group)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">as.yearmon</span>(<span class="st">"2020-04"</span>), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Employment Trends by Industry Group"</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Comparison of Retail and Non-Retail Sectors"</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year-Month"</span>, <span class="at">y =</span> <span class="st">"Total Employed (Millions)"</span>, <span class="at">color =</span> <span class="st">"Industry Group"</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-Data-Translation_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ol start="5" type="1">
+<li>Industry Group Heterogeneity regression interaction analysis</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>model_het <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  total_employed_mil <span class="sc">~</span> post_covid <span class="sc">*</span> industry_group <span class="sc">+</span> month_index,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> industry_group_ts</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The variables 'industry_groupHospitality' and 'post_covid:industry_groupHospitality' have been removed because of collinearity (see $collin.var).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">etable</span>(model_het, <span class="at">tex =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                  model_het
+Dependent Var.:                          total_employed_mil
+                                                           
+Constant                                  15.13*** (0.2904)
+post_covid                               -3.046*** (0.4621)
+industry_groupManufacturing               -0.7782* (0.3429)
+industry_groupServices                    71.69*** (0.3429)
+industry_groupOther                       20.69*** (0.3429)
+month_index                              0.0248*** (0.0029)
+post_covid x industry_groupManufacturing   -0.4895 (0.4945)
+post_covid x industry_groupServices      -4.085*** (0.4945)
+post_covid x industry_groupOther            0.0692 (0.4945)
+________________________________________ __________________
+S.E. type                                               IID
+Observations                                            208
+R2                                                  0.99817
+Adj. R2                                             0.99809
+---
+Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Interpretation:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Coefficient (Std. Error)</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>post_covid</strong></td>
+<td>-3.05*** (0.46)</td>
+<td>Retail employment fell by ~3 million post-COVID, relative to its pre-COVID trend.</td>
+</tr>
+<tr class="even">
+<td><strong>post_covid × Manufacturing</strong></td>
+<td>-0.49 (0.49)</td>
+<td>Not statistically significant – the decline in manufacturing was similar to that of retail.</td>
+</tr>
+<tr class="odd">
+<td><strong>post_covid × Services</strong></td>
+<td>-4.09*** (0.49)</td>
+<td>Services experienced a significantly <em>larger</em> drop (approx. 4.1 million more than retail).</td>
+</tr>
+<tr class="even">
+<td><strong>post_covid × Other</strong></td>
+<td>0.07 (0.49)</td>
+<td>No significant difference from retail.</td>
+</tr>
+<tr class="odd">
+<td><strong>month_index</strong></td>
+<td>0.025*** (0.0029)</td>
+<td>A small, positive time trend in employment, capturing recovery or seasonal shifts.</td>
+</tr>
+</tbody>
+</table>
+<p>Retail was clearly hit by the pandemic, but <strong>the services sector was hit even harder</strong>, with an estimated 4.1 million more job losses than retail post-COVID, all else equal. The effect for <strong>manufacturing</strong> was slightly worse than retail but not statistically distinguishable, while the “Other” category appears unaffected in relative terms.</p>
+<p>This result reflects the <strong>industry-specific exposure</strong> to lockdowns and consumer behavior shifts. Many service, sector jobs, especially in face-to-face settings like hospitality, education, and healthcare, were suspended or terminated due to COVID-related restrictions. The <strong>retail sector</strong>, while vulnerable, may have benefited partially from increased demand in essential goods or a pivot to online platforms.</p>
+<p><strong>Assumptions:</strong></p>
+<ol type="1">
+<li><strong>Parallel Trends Assumption (for DiD):</strong> Our DiD model compares changes in employment between retail and non-retail sectors before and after April 2020. A critical identifying assumption is that, in the absence of COVID-19, employment trends in both groups would have followed parallel paths over time. The employment trend plot (see <em>Employment Trends: Retail vs.&nbsp;Non-Retail</em>) shows that both groups had relatively stable and similar trajectories before April 2020. While not a formal test, the visual evidence supports the plausibility of the parallel trends assumption.</li>
+<li><strong>Independence and Identically Distributed Errors (IID):</strong> Our regression models assume that the error terms are independently and identically distributed, without serial correlation or heteroskedasticity. Given the time-series structure of the data, some autocorrelation is likely. A more conservative analysis might cluster standard errors by industry or month. However, for this exploratory analysis, we proceed with IID errors and interpret results cautiously.</li>
+</ol>
+<p><strong>Summary</strong>: Using a combination of visualizations and regression models, we tracked changes in total employment and average employment rates before and after April 2020. While retail did not experience the largest absolute decline in jobs, its workers faced sharper drops in employment rates, potentially reflecting a high share of part-time and frontline roles vulnerable to temporary layoffs. The services sector, however, bore the brunt of job losses, underscoring the pandemic’s uneven impact across industries.</p>
+</section>
+<section id="what-has-changed-about-who-is-working-and-earning-income-during-the-pandemic" class="level3">
+<h3 class="anchored" data-anchor-id="what-has-changed-about-who-is-working-and-earning-income-during-the-pandemic">3. What has changed about who is working and earning income during the pandemic?</h3>
+<p>This analysis looks into how COVID-19 affected the weekly earning among employed individuals. Specifically looking at the retail sector and whether they had different earning trend compared to other industries. Retail workers tend to be lower paid and are more vulnerable to economic shocks. So looking at this sector would provide us with important insight on who is earning income in the post-COVID market.</p>
+<p>For the first regression we used a Difference-in-Difference model to estimate how the earning in retail changed after COVID, relative to those that didn’t work in retail. With this method we where able to isolate the effect of the pandemic by comparing the changed two years prior and two years after the start of lock down.</p>
+<p><strong>THE DATA AND CLEANING PROCESS:</strong></p>
+<p>We use the current population survey micro data from IPUMS, cover the two years prior to COVID and two years post COVID. To clean the data we first converted the labelled variables to factor using haven: :as_factor, then filtered for observations with valid year, month, and work per hour data. Next, we defined employed individuals as those either “at work”, or “Has job, not at work last week.”. Afterwards, we had to be able to identify who the retail workers are. We did this by uploading the list of industry codes from canvas names “indnames.csv”. Afterwards, we had to define the post-COVID period as April 2020 to April 2022.</p>
+<p><strong>ANALYTICAL METHOD: DIFFERENCE-IN-DIFFERENCE</strong></p>
+<p>Retail is the binary variable equal to 1 for retail workers, PostCOVID is the variable indicator for the April 2020 onward. Retail x PostCOVID is the key interaction term, that tells us whether earning in retail changed differently than in other sectors after the start of the pandemic. Year and moth fixed effects control the broader time trends. The model is estimated using lm() in R to summarize the earnings data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>model_did_weighted_q3 <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  earnings_q3 <span class="sc">~</span> is_retail_q3<span class="sc">*</span> post_covid_q3 <span class="sc">+</span> <span class="fu">factor</span>(year) <span class="sc">+</span> <span class="fu">factor</span>(month),</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> cleaned_data_q3, <span class="at">weights =</span> <span class="sc">~</span>weight_q3</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The variables 'is_retail_q3TRUE' and 'is_retail_q3TRUE:post_covid_q3' have been removed because of collinearity (see $collin.var).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_did_weighted_q3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OLS estimation, Dep. Var.: earnings_q3
+Observations: 2,559,125
+Weights: weight_q3
+Standard-errors: IID 
+                         Estimate Std. Error     t value   Pr(&gt;|t|)    
+(Intercept)            590.375838   0.410339 1438.751432  &lt; 2.2e-16 ***
+post_covid_q3            1.135874   0.577206    1.967884 4.9082e-02 *  
+factor(year)2019         0.374997   0.306567    1.223216 2.2125e-01    
+factor(year)2020        -1.276201   0.528326   -2.415556 1.5711e-02 *  
+factor(year)2021        -2.425421   0.654466   -3.705953 2.1060e-04 ***
+factor(year)2022        -2.318229   0.796420   -2.910812 3.6049e-03 ** 
+factor(month)February   -0.573941   0.478624   -1.199148 2.3047e-01    
+factor(month)March      -0.367672   0.478257   -0.768775 4.4203e-01    
+factor(month)April       1.395925   0.494918    2.820516 4.7947e-03 ** 
+factor(month)May         2.919705   0.536349    5.443667 5.2199e-08 ***
+factor(month)June        4.594116   0.534926    8.588323  &lt; 2.2e-16 ***
+factor(month)July        5.630557   0.533993   10.544261  &lt; 2.2e-16 ***
+factor(month)August      6.129929   0.534260   11.473678  &lt; 2.2e-16 ***
+factor(month)September   3.644815   0.533289    6.834599 8.2253e-12 ***
+factor(month)October     2.354900   0.532413    4.423071 9.7312e-06 ***
+factor(month)November    1.615057   0.532256    3.034362 2.4105e-03 ** 
+factor(month)December    1.077402   0.532534    2.023160 4.3057e-02 *  
+... 2 variables were removed because of collinearity (is_retail_q3TRUE and is_retail_q3TRUE:post_covid_q3)
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 9,102.8   Adj. R2: 2.01e-4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># or etable(model_did_weighted_q3)?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The coefficient on Retail x Post-COVID tells us the difference in earnings change for retail compared to other industries after April 2020. If the coefficient is -20, it suggests that retail workers earned $20 less per week than expected based on non-retail trends. Assuming the coefficient is negative and significant, the result would the indicate a disproportionate decline in the earning retail workers had after COVID. If positive or non-significant, retail earning may have remained steady or have a more rapid recovery.</p>
+<p>We must be cautious when making this interpretation because earnings are imputed from hours worked and a fixed wage. Variation in actual hourly wages or benefits are not included!</p>
+<p><strong>ASSUMPTIONS AND LIMITATIONS</strong></p>
+<p>In this analysis we relied strongly on the following assumptions. Parallel trends with DiD we assumed that in the absence of COVID, earnings in retail and non-retail sectors would follow the same growth trajectory. No other concurrent shocks accrued, we assumed that no other events deferentially affected retail earnings after April 2020. We used a homogeneous wage rate, weekly earning were calculated assuming a $15 per hour pay for everyone, which then oversimplifies wage heterogeneity across the job and sectors. Lastly, we assumed aggregation bias, because we ran the model on averaged earnings by group-month. We lost individual-level variation and weighting, which could bias estimates.</p>
+<p><strong>VISUAL PRESENTAION</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(employment_summary_filtered_q3, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">interaction</span>(year, month), <span class="at">y =</span> avg_earnings_q3, <span class="at">color =</span> is_retail_q3)) <span class="sc">+</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> is_retail_q3)) <span class="sc">+</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>, <span class="at">y =</span> <span class="st">"Average Weekly Earnings (USD)"</span>, <span class="at">color =</span> <span class="st">"Retail Sector"</span>) <span class="sc">+</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>)) <span class="sc">+</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtitle</span>(<span class="st">"Trends in Weekly Earnings Before and After COVID"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-Data-Translation_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Summary:</strong> Retail workers saw a distinct change in weekly earnings following the onset of COVID-19, relative to workers in other sectors. Our DiD analysis suggests that earning in the retail sector may have declined more or recovered differently than in the rest of the labor market! This supports our idea that COVID changed not only the employment levels but also the earning patterns, especially for sectors with low-wages. This would and did have bigger implications for inequality and economic vulnerability in the workforce.</p>
+<p><strong>Conclusion</strong>: The COVID-19 pandemic caused significant disruptions in the labor market, but its impact was far from uniform across industries. While retail employment showed some resilience in total job counts, retail workers still experienced notable declines in employment rates and earnings, reflecting the precarious nature of many retail jobs. The services sector, in contrast, endured the largest employment losses, illustrating the varied ways in which pandemic-related restrictions affected different parts of the economy.</p>
+<p>These results highlight the complexity of economic recovery and the need for nuanced approaches when designing workforce support and economic policies. Simply looking at total job losses can mask deeper vulnerabilities faced by specific worker groups, particularly those in lower-wage and frontline positions. While the data and methods provide valuable insights, limitations such as wage imputation and potential unobserved heterogeneity suggest that continued monitoring and more granular research are essential.</p>
+<p>Our study also points to the importance of ongoing data collection and analysis to better understand how employment and income patterns evolve as the economy adjusts post-pandemic. Such insights are vital for crafting policies that not only promote recovery but also address longstanding inequities revealed and exacerbated by the crisis.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
